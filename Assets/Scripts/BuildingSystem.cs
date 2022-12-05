@@ -9,15 +9,26 @@ public class BuildingSystem : MonoBehaviour
     public ushort size;
     public ushort layer;
     public Axis axis;
-    public Transform highlightedQuad;
+    public GameObject buildPrefab;
+    public Mesh hoveredMesh;
+    public Material hoveredMaterial;
 }
 
 [CustomEditor(typeof(BuildingSystem))]
 public class BuildingSystemEditor : Editor
 {
+    Vector3 buildButtonPosition;
+
     void OnSceneGUI()
     {
         var system = target as BuildingSystem;
+
+        DrawGrid(system);
+        UpdateHoveredQuad(system);
+    }
+
+    void DrawGrid(BuildingSystem system)
+    {
         var colorDefault = new Color(0.25f, 0.75f, 1f, 0.1f);
         var colorHighlight = new Color(0.25f, 0.75f, 1f, 0.4f);
         var start = system.transform.position - Vector3.one * system.size / 2f;
@@ -42,7 +53,10 @@ public class BuildingSystemEditor : Editor
             Handles.DrawLine(start + new Vector3(0, i, layer), start + new Vector3(system.size, i, layer), thickness);
             Handles.DrawLine(start + new Vector3(i, 0, layer), start + new Vector3(i, system.size, layer), thickness);
         }
+    }
 
+    void UpdateHoveredQuad(BuildingSystem system)
+    {
         var plane = new Plane(system.axis switch
         {
             Axis.X => Vector3.right,
@@ -71,7 +85,9 @@ public class BuildingSystemEditor : Editor
                 hitPoint.x = SnapToGrid(hitPoint.x);
                 hitPoint.y = SnapToGrid(hitPoint.y);
             }
-            system.highlightedQuad.position = hitPoint;
+            buildButtonPosition = hitPoint;
+            if (Handles.Button(buildButtonPosition, Quaternion.Euler(90f, 0f, 0f), 0.5f, 1f, Handles.RectangleHandleCap))
+                Instantiate(system.buildPrefab, buildButtonPosition, Quaternion.identity, system.transform);
         }
     }
 }
