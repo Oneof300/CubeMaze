@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(CubeMaze))]
+[CustomEditor(typeof(CubeMaze)), InitializeOnLoad]
 public class CubeMazeEditor : Editor
 {
     override public void OnInspectorGUI()
@@ -47,6 +47,9 @@ public class CubeMazeEditor : Editor
             ))
                 DestroyImmediate(hovered.gameObject);
         }
+
+        Selection.selectionChanged -= OnSelectionChanged;
+        Selection.selectionChanged += OnSelectionChanged;
     }
 
     void DrawGrid(CubeMaze cubeMaze)
@@ -55,8 +58,8 @@ public class CubeMazeEditor : Editor
         var colorHighlight = new Color(0.25f, 0.75f, 1f, 0.4f);
         var start = cubeMaze.transform.position - Vector3.one * cubeMaze.size / 2f;
 
-        for (ushort i = 0; i <= cubeMaze.size; ++i) {
-            
+        for (ushort i = 0; i <= cubeMaze.size; ++i)
+        {    
             var layer = 0;
             var thickness = 1f;
             Handles.color = colorDefault;
@@ -88,12 +91,23 @@ public class CubeMazeEditor : Editor
             var offset = cubeMaze.size % 2 == 0 ? 0.5f : 0f;
             Func<float, float> SnapToGrid = value => Mathf.Clamp(Mathf.Round(value + offset) - offset, -sizeHalve, sizeHalve);
             hitPoint.x = SnapToGrid(hitPoint.x);
+            hitPoint.y = hitPoint.y + 0.5f;
             hitPoint.z = SnapToGrid(hitPoint.z);
             cubeMaze.buildPreview.position = hitPoint;
         }
         for (int i = 0; i < cubeMaze.buildPreview.childCount; i++)
         {
             cubeMaze.buildPreview.GetChild(i).gameObject.SetActive(i == (int)cubeMaze.selectedSegment);
+        }
+    }
+
+    void OnSelectionChanged()
+    {
+        var cubeMaze = target as CubeMaze;
+        if (Selection.transforms.Contains(cubeMaze.transform)) return;
+        for (int i = 0; i < cubeMaze.buildPreview.childCount; i++)
+        {
+            cubeMaze.buildPreview.GetChild(i).gameObject.SetActive(false);
         }
     }
 }

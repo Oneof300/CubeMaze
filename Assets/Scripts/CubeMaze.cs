@@ -11,6 +11,11 @@ public class CubeMaze : MonoBehaviour
     public Transform buildPreview;
     public ushort layer;
     public CubeMazeSegment selectedSegment;
+
+    void Start()
+    {
+        Application.targetFrameRate = 300;
+    }
 }
 
 public enum CubeMazeSegment
