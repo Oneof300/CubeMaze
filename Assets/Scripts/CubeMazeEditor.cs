@@ -8,6 +8,7 @@ using UnityEditor;
 [CustomEditor(typeof(CubeMaze)), InitializeOnLoad]
 public class CubeMazeEditor : Editor
 {
+
     override public void OnInspectorGUI()
     {
         base.OnInspectorGUI();
@@ -21,6 +22,9 @@ public class CubeMazeEditor : Editor
 
         if (EditorGUILayout.LinkButton("Rotate Z"))
             cubeMaze.buildPreview.Rotate(0f, 0f, 90f);
+
+        if (EditorGUILayout.LinkButton("Initialize"))
+            cubeMaze.Initialize();
     }
 
     void OnSceneGUI()
@@ -28,7 +32,7 @@ public class CubeMazeEditor : Editor
         var cubeMaze = target as CubeMaze;
 
         DrawGrid(cubeMaze);
-        UpdateHoveredQuad(cubeMaze);
+        UpdateBuildPreview(cubeMaze);
 
         if (Event.current.type == EventType.MouseUp && Event.current.button == 0)
         {
@@ -80,34 +84,54 @@ public class CubeMazeEditor : Editor
         }
     }
 
-    void UpdateHoveredQuad(CubeMaze cubeMaze)
+    void UpdateBuildPreview(CubeMaze cubeMaze)
     {
         var plane = new Plane(Vector3.up, cubeMaze.size / 2f - cubeMaze.layer);
         var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
         if (plane.Raycast(ray, out float enter))
         {
             var hitPoint = ray.GetPoint(enter);
-            var sizeHalve = cubeMaze.size / 2f - 0.5f;
-            var offset = cubeMaze.size % 2 == 0 ? 0.5f : 0f;
-            Func<float, float> SnapToGrid = value => Mathf.Clamp(Mathf.Round(value + offset) - offset, -sizeHalve, sizeHalve);
-            hitPoint.x = SnapToGrid(hitPoint.x);
+            Func<float, float, float> SnapToGrid = (value, size) => {
+                var sizeHalve = size / 2f - 0.5f;
+                var offset = size % 2 == 0 ? 0.5f : 0f;
+                return Mathf.Clamp(Mathf.Round(value + offset) - offset, -sizeHalve, sizeHalve);
+            };
+            hitPoint.x = SnapToGrid(hitPoint.x, cubeMaze.size);
             hitPoint.y = hitPoint.y + 0.5f;
-            hitPoint.z = SnapToGrid(hitPoint.z);
+            hitPoint.z = SnapToGrid(hitPoint.z, cubeMaze.size);
+            if (cubeMaze.selectedSegment == CubeMazeSegment.Wall) hitPoint += cubeMaze.buildPreview.forward / -2f;
             cubeMaze.buildPreview.position = hitPoint;
         }
         for (int i = 0; i < cubeMaze.buildPreview.childCount; i++)
         {
-            cubeMaze.buildPreview.GetChild(i).gameObject.SetActive(i == (int)cubeMaze.selectedSegment);
+            var buildPreview = cubeMaze.buildPreview.GetChild(i);
+            var isSelectedSegment = i == (int)cubeMaze.selectedSegment;
+            buildPreview.gameObject.SetActive(isSelectedSegment);
+            if (isSelectedSegment) buildPreview.GetComponent<MeshRenderer>().material =
+                IsBlocked(buildPreview.position, cubeMaze) ? cubeMaze.buildPreviewBlocked : cubeMaze.buildPreviewOpen;
         }
+    }
+
+    bool IsBlocked(Vector3 position, CubeMaze cubeMaze)
+    {
+        return false;
+        if (cubeMaze.selectedSegment == CubeMazeSegment.Wall)
+            return cubeMaze.nodes[(int)position.x, (int)position.y, (int)position.z].edges[position.x % 1 == 0.5f ? 3 : position.y % 1 == 0.5f ? 4 : 5].state == EdgeState.blocked;
+        else
+            return cubeMaze.nodes[(int)position.x, (int)position.y, (int)position.z].state == NodeState.blocked;
     }
 
     void OnSelectionChanged()
     {
-        var cubeMaze = target as CubeMaze;
-        if (Selection.transforms.Contains(cubeMaze.transform)) return;
-        for (int i = 0; i < cubeMaze.buildPreview.childCount; i++)
+        try
         {
-            cubeMaze.buildPreview.GetChild(i).gameObject.SetActive(false);
+            var cubeMaze = target as CubeMaze;
+            if (Selection.transforms.Contains(cubeMaze.transform)) return;
+            for (int i = 0; i < cubeMaze.buildPreview.childCount; i++)
+            {
+                cubeMaze.buildPreview.GetChild(i).gameObject.SetActive(false);
+            }
         }
+        catch {}
     }
 }
