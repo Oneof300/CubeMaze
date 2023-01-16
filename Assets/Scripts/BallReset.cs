@@ -6,6 +6,7 @@ public class BallReset : MonoBehaviour
 {
     Vector3 start;
     Rigidbody body;
+    public Transform cube;
 
     void Start()
     {
@@ -15,7 +16,7 @@ public class BallReset : MonoBehaviour
 
     public void Reset()
     {
-        transform.position = start;
+        transform.position = cube.rotation * start;
         body.velocity = Vector3.zero;
         body.angularVelocity = Vector3.zero;
     }
