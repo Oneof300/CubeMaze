@@ -187,16 +187,18 @@ public class CubeMazeEditorTool : EditorTool
             {
                 newScale.x = Math.Abs(newScale.z) + 1f;
                 newScale.y = Math.Abs(newScale.y) + 1f;
+                newScale = Quaternion.Euler(-cubeMaze.buildPreview.rotation.x, 0f, 0f) * newScale;
             }
             else if (Math.Abs(forward.y) > 0.9)
             {
-                newScale.x = Math.Abs(newScale.x) + 1f;
-                newScale.y = Math.Abs(newScale.z) + 1f;
+                newScale.x = Math.Abs(newScale.z) + 1f;
+                newScale.y = Math.Abs(newScale.x) + 1f;
             }
             else
             {
                 newScale.x = Math.Abs(newScale.x) + 1f;
                 newScale.y = Math.Abs(newScale.y) + 1f;
+                newScale = Quaternion.Euler(0f, 0f, -cubeMaze.buildPreview.rotation.z) * newScale;
             }
             newScale.z = 1f;
             cubeMaze.buildPreview.position = newPosition;

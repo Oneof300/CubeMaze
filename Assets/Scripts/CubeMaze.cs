@@ -34,10 +34,11 @@ public class CubeMaze : MonoBehaviour
 
     void OnSelectionChanged()
     {
-        if (Selection.activeObject == this.gameObject)
+        try
         {
-            ToolManager.SetActiveTool<CubeMazeEditorTool>();
-        }
+            if (Selection.activeObject == this.gameObject)
+                ToolManager.SetActiveTool<CubeMazeEditorTool>();
+        } catch {}
     }
 
     public void Initialize()
