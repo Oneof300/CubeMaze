@@ -149,6 +149,8 @@ public class CubeMazeEditorTool : EditorTool
                 hitPoint += cubeMaze.buildPreview.forward / -2f;
                 wallStartPosition = hitPoint;
             }
+            else if (cubeMaze.selectedSegment == CubeMazeSegment.FinishTrigger)
+                hitPoint += cubeMaze.buildPreview.up / -2f;
             cubeMaze.buildPreview.position = hitPoint;
         }
         for (int i = 0; i < cubeMaze.buildPreview.childCount; i++)

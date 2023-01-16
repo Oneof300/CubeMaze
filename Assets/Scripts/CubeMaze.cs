@@ -63,7 +63,7 @@ public class CubeMaze : MonoBehaviour
 
 public enum CubeMazeSegment
 {
-    Straight = 0, End = 1, CurveSmall = 2, CurveBig = 3, Wall = 4
+    Straight = 0, End = 1, CurveSmall = 2, CurveBig = 3, Wall = 4, FinishTrigger = 5
 }
 public enum NodeState
 {
