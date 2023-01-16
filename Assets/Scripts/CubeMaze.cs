@@ -3,22 +3,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.EditorTools;
 
 public class CubeMaze : MonoBehaviour
 {
 
     public ushort size;
-    public Node[,,] nodes;
     public GameObject[] segments;
     public Transform buildPreview;
-    public ushort layer;
-    public CubeMazeSegment selectedSegment;
     public Material buildPreviewOpen;
     public Material buildPreviewBlocked;
 
+    [HideInInspector]
+    public ushort layer;
+    [HideInInspector]
+    public CubeMazeSegment selectedSegment;
+    public Node[,,] nodes;
+
+    void OnValidate()
+    {
+        Debug.Log("Subscribe Selection Changed");
+        Selection.selectionChanged -= OnSelectionChanged;
+        Selection.selectionChanged += OnSelectionChanged;
+    }
+
     void Start()
     {
-        Application.targetFrameRate = 300;
+        Application.targetFrameRate = 120;
+    }
+
+    void OnSelectionChanged()
+    {
+        if (Selection.activeObject == this.gameObject)
+        {
+            ToolManager.SetActiveTool<CubeMazeEditorTool>();
+        }
     }
 
     public void Initialize()

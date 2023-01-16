@@ -4,76 +4,107 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.EditorTools;
 
-[CustomEditor(typeof(CubeMaze)), InitializeOnLoad]
-public class CubeMazeEditor : Editor
+[EditorTool("Cube Maze Tool", typeof(CubeMaze))]
+public class CubeMazeEditorTool : EditorTool
 {
-    private bool mouse;
-    private Vector3 wallStartPosition;
+    CubeMaze cubeMaze;
+    bool mouseIsPressed;
+    Vector3 wallStartPosition;
 
-    override public void OnInspectorGUI()
+    void OnEnable()
     {
-        base.OnInspectorGUI();
-        var cubeMaze = target as CubeMaze;
-
-        if (EditorGUILayout.LinkButton("Rotate X"))
-            cubeMaze.buildPreview.Rotate(90f, 0f, 0f);
-
-        if (EditorGUILayout.LinkButton("Rotate Y"))
-            cubeMaze.buildPreview.Rotate(0f, 90f, 0f);
-
-        if (EditorGUILayout.LinkButton("Rotate Z"))
-            cubeMaze.buildPreview.Rotate(0f, 0f, 90f);
-
-        // if (EditorGUILayout.LinkButton("Initialize"))
-        //     cubeMaze.Initialize();
+        cubeMaze = target as CubeMaze;
+    }
+    
+    public override void OnActivated()
+    {
+        SceneView.lastActiveSceneView.ShowNotification(new GUIContent("Entering Cube Maze Tool"), .1f);
+        cubeMaze.buildPreview.gameObject.SetActive(true);
     }
 
-    void OnSceneGUI()
+    public override void OnWillBeDeactivated()
     {
-        var cubeMaze = target as CubeMaze;
+        SceneView.lastActiveSceneView.ShowNotification(new GUIContent("Exiting Cube Maze Tool"), .1f);
+        cubeMaze.buildPreview.gameObject.SetActive(false);
+    }
 
-        DrawGrid(cubeMaze);
-        if (!mouse)
-        {
-            UpdateBuildPreview(cubeMaze);
-        }
+    public override void OnToolGUI(EditorWindow window)
+    {
+        if (!(window is SceneView sceneView))
+            return;
+
+        HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+        DrawButtons();
+        DrawGrid();
+        if (!mouseIsPressed)
+            UpdateBuildPreview();
         else if (cubeMaze.selectedSegment == CubeMazeSegment.Wall)
-        {
-            UpdateWallPreview(cubeMaze);
-        }
+            UpdateWallPreview();
         if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
-        {
-            mouse = true;
-        }
+            mouseIsPressed = true;
         else if (Event.current.type == EventType.MouseUp && Event.current.button == 0)
         {
-            mouse = false;
-            if (!cubeMaze.GetComponentsInChildren<Transform>().Any(
-                segment => segment != cubeMaze.buildPreview && segment.transform.parent != cubeMaze.buildPreview && segment.position == cubeMaze.buildPreview.position
-            ))
-                Instantiate(cubeMaze.segments[(int)cubeMaze.selectedSegment], cubeMaze.buildPreview.position, cubeMaze.buildPreview.rotation, cubeMaze.transform)
-                    .transform.localScale = cubeMaze.buildPreview.localScale;
-            else
-                Debug.Log("Position was blocked.");
+            mouseIsPressed = false;
+            BuildSegment();
         }
         else if (Event.current.type == EventType.MouseUp && Event.current.button == 1)
-        {
-            Transform hovered;
-            if (hovered = cubeMaze.GetComponentsInChildren<Transform>().FirstOrDefault(
-                segment => segment != cubeMaze.buildPreview && segment.transform.parent != cubeMaze.buildPreview && segment.position == cubeMaze.buildPreview.position
-            ))
-                DestroyImmediate(hovered.gameObject);
-        }
-
-        Selection.selectionChanged -= OnSelectionChanged;
-        Selection.selectionChanged += OnSelectionChanged;
+            DestroySegment();
     }
 
-    void DrawGrid(CubeMaze cubeMaze)
+    private void DrawButtons()
     {
-        var colorDefault = new Color(0.25f, 0.75f, 1f, 0.1f);
-        var colorHighlight = new Color(0.25f, 0.75f, 1f, 0.4f);
+        Handles.BeginGUI();
+        using (new GUILayout.HorizontalScope())
+        {
+            using (new GUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("Layer " + cubeMaze.layer);
+                    GUI.skin.horizontalSlider.fixedWidth = 150f;
+                    cubeMaze.layer = (ushort)GUILayout.HorizontalSlider(cubeMaze.layer, 0, cubeMaze.size);
+                }
+                cubeMaze.selectedSegment = (CubeMazeSegment)EditorGUILayout.EnumPopup(cubeMaze.selectedSegment);
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("Rotate:");
+                    using (new GUILayout.VerticalScope())
+                    {
+                        using (new GUILayout.HorizontalScope())
+                        {
+                            if (GUILayout.Button("-X"))
+                                cubeMaze.buildPreview.Rotate(-90f, 0f, 0f, Space.World);
+                            if (GUILayout.Button("+X"))
+                                cubeMaze.buildPreview.Rotate(90f, 0f, 0f, Space.World);
+                        }
+                        using (new GUILayout.HorizontalScope())
+                        {
+                            if (GUILayout.Button("-Y"))
+                                cubeMaze.buildPreview.Rotate(0f, -90f, 0f, Space.World);
+                            if (GUILayout.Button("+Y"))
+                                cubeMaze.buildPreview.Rotate(0f, 90f, 0f, Space.World);
+                        }
+                        using (new GUILayout.HorizontalScope())
+                        {
+                            if (GUILayout.Button("-Z"))
+                                cubeMaze.buildPreview.Rotate(0f, 0f, -90f, Space.World);
+                            if (GUILayout.Button("+Z"))
+                                cubeMaze.buildPreview.Rotate(0f, 0f, 90f, Space.World);
+                        }
+                    }
+                }
+            }
+            GUILayout.FlexibleSpace();
+        }
+        Handles.EndGUI();
+    }
+
+    void DrawGrid()
+    {
+        var colorDefault = new Color(0.25f, 0.75f, 1f, 0.04f);
+        var colorHighlight = new Color(0.25f, 0.75f, 1f, 0.12f);
         var start = cubeMaze.transform.position - Vector3.one * cubeMaze.size / 2f;
 
         for (ushort i = 0; i <= cubeMaze.size; ++i)
@@ -98,7 +129,7 @@ public class CubeMazeEditor : Editor
         }
     }
 
-    void UpdateBuildPreview(CubeMaze cubeMaze)
+    void UpdateBuildPreview()
     {
         var plane = new Plane(Vector3.up, cubeMaze.size / 2f - cubeMaze.layer);
         var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
@@ -134,7 +165,7 @@ public class CubeMazeEditor : Editor
         }
     }
 
-    void UpdateWallPreview(CubeMaze cubeMaze)
+    void UpdateWallPreview()
     {
         var forward = cubeMaze.buildPreview.forward;
         var plane = new Plane(forward, wallStartPosition);
@@ -167,31 +198,41 @@ public class CubeMazeEditor : Editor
                 newScale.x = Math.Abs(newScale.x) + 1f;
                 newScale.y = Math.Abs(newScale.y) + 1f;
             }
-            newScale.z = 0.1f;
+            newScale.z = 1f;
             cubeMaze.buildPreview.position = newPosition;
             cubeMaze.buildPreview.localScale = newScale;
         }
     }
 
-    bool IsBlocked(Vector3 position, CubeMaze cubeMaze)
+    void BuildSegment()
+    {
+        if (!cubeMaze.GetComponentsInChildren<Transform>().Any(
+                segment => segment != cubeMaze.buildPreview && segment.transform.parent != cubeMaze.buildPreview && segment.position == cubeMaze.buildPreview.position
+            ))
+            {
+                var newSegment = Instantiate(cubeMaze.segments[(int)cubeMaze.selectedSegment], cubeMaze.buildPreview.position, cubeMaze.buildPreview.rotation, cubeMaze.transform);
+                if (cubeMaze.selectedSegment == CubeMazeSegment.Wall)
+                    newSegment.transform.localScale = new Vector3(cubeMaze.buildPreview.localScale.x, cubeMaze.buildPreview.localScale.y, 0.1f);
+                Undo.RegisterCreatedObjectUndo(newSegment, "Create " + newSegment.name);
+            }
+            else
+                Debug.Log("Position was blocked.");
+    }
+
+    void DestroySegment()
+    {
+        Transform hovered;
+        if (hovered = cubeMaze.GetComponentsInChildren<Transform>().FirstOrDefault(
+            segment => segment != cubeMaze.buildPreview && segment.transform.parent != cubeMaze.buildPreview && segment.position == cubeMaze.buildPreview.position
+        ))
+            Undo.DestroyObjectImmediate(hovered.gameObject);
+    }
+
+    bool IsBlocked(Vector3 position)
     {
         if (cubeMaze.selectedSegment == CubeMazeSegment.Wall)
             return cubeMaze.nodes[(int)position.x, (int)position.y, (int)position.z].edges[position.x % 1 == 0.5f ? 3 : position.y % 1 == 0.5f ? 4 : 5].state == EdgeState.blocked;
         else
             return cubeMaze.nodes[(int)position.x, (int)position.y, (int)position.z].state == NodeState.blocked;
-    }
-
-    void OnSelectionChanged()
-    {
-        try
-        {
-            var cubeMaze = target as CubeMaze;
-            if (Selection.transforms.Contains(cubeMaze.transform)) return;
-            for (int i = 0; i < cubeMaze.buildPreview.childCount; i++)
-            {
-                cubeMaze.buildPreview.GetChild(i).gameObject.SetActive(false);
-            }
-        }
-        catch {}
     }
 }
