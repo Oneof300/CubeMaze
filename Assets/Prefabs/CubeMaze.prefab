@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2845962759681256111}
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 3, y: 0.5, z: 2}
+  m_LocalPosition: {x: -3, y: 0.5, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -91,10 +91,10 @@ MonoBehaviour:
   - {fileID: 4375822734936937107, guid: 59f7b57c7a4eae14680a1a7c2dd41972, type: 3}
   - {fileID: 1149215801731804397, guid: 0bd25d9320f862545bada43670f6e122, type: 3}
   buildPreview: {fileID: 3470826290867541517}
-  layer: 3
-  selectedSegment: 4
   buildPreviewOpen: {fileID: 2100000, guid: 8b34ad86f3e251c4481ed6050a57226b, type: 2}
   buildPreviewBlocked: {fileID: 2100000, guid: bb125475230769f4a87b7a13d5270514, type: 2}
+  layer: 3
+  selectedSegment: 4
 --- !u!114 &1834659155
 MonoBehaviour:
   m_ObjectHideFlags: 0
