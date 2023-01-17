@@ -22,7 +22,6 @@ public class CubeMaze : MonoBehaviour
 
     void OnValidate()
     {
-        Debug.Log("Subscribe Selection Changed");
         Selection.selectionChanged -= OnSelectionChanged;
         Selection.selectionChanged += OnSelectionChanged;
     }
