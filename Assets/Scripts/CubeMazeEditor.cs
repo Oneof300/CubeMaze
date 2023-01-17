@@ -36,7 +36,7 @@ public class CubeMazeEditorTool : EditorTool
             return;
 
         HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
-        DrawButtons();
+        DrawControls();
         DrawGrid();
         if (!mouseIsPressed)
             UpdateBuildPreview();
@@ -53,7 +53,7 @@ public class CubeMazeEditorTool : EditorTool
             DestroySegment();
     }
 
-    private void DrawButtons()
+    private void DrawControls()
     {
         Handles.BeginGUI();
         using (new GUILayout.HorizontalScope())
