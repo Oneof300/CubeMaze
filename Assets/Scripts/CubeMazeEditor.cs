@@ -149,6 +149,8 @@ public class CubeMazeEditorTool : EditorTool
                 hitPoint += cubeMaze.buildPreview.forward / -2f;
                 wallStartPosition = hitPoint;
             }
+            else if (cubeMaze.selectedSegment == CubeMazeSegment.FinishTrigger)
+                hitPoint += cubeMaze.buildPreview.up / -2f;
             cubeMaze.buildPreview.position = hitPoint;
         }
         for (int i = 0; i < cubeMaze.buildPreview.childCount; i++)
@@ -191,8 +193,8 @@ public class CubeMazeEditorTool : EditorTool
             }
             else if (Math.Abs(forward.y) > 0.9)
             {
-                newScale.x = Math.Abs(newScale.z) + 1f;
-                newScale.y = Math.Abs(newScale.x) + 1f;
+                newScale.x = Math.Abs(newScale.x) + 1f;
+                newScale.y = Math.Abs(newScale.z) + 1f;
             }
             else
             {
