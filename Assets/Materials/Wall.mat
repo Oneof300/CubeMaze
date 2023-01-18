@@ -80,7 +80,8 @@ Material:
     - _AlphaToMask: 0
     - _AlphaToMaskInspectorValue: 0
     - _BlendMode: 0
-    - _BorderSize: 0.15
+    - _BorderSize: 0.18
+    - _BorderSmoothness: 1.5
     - _ConservativeDepthOffsetEnable: 0
     - _CullMode: 0
     - _CullModeForward: 0

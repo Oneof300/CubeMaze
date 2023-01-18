@@ -7,6 +7,8 @@ public class TurnCube : MonoBehaviour
     **/
     [SerializeField]
     private UDPServer incomingData;
+    [SerializeField]
+    private Rotator rotator;
     private float smooth = 10.0f;
     Quaternion offset; // Sample taken to calibrate.
     bool calibrated = false;
@@ -21,7 +23,8 @@ public class TurnCube : MonoBehaviour
     void Update()
     {
         if(calibrated == true) {
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.deltaTime * smooth);
+            var rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.deltaTime * smooth);
+            rotator.Rotate((rotation * Quaternion.Inverse(transform.rotation)).eulerAngles);
         }
     }
 

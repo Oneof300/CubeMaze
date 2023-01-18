@@ -16,7 +16,7 @@ public class SceneFader : MonoBehaviour
         if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
             StartCoroutine(TransitionToScene(nextSceneIndex));
         else
-            Reload();
+            StartCoroutine(TransitionToScene(0));
     }
 
     public void Reload()

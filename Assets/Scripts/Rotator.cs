@@ -13,6 +13,11 @@ public class Rotator : MonoBehaviour
     {
         _speed += Input.GetKeyDown("r") ? 10f : Input.GetKeyDown("f") ? -10f : 0f;
         var rotation = new Vector3(Input.GetAxis("Vertical"), Input.GetKey("q") ? -1f : Input.GetKey("e") ? 1f : 0f, Input.GetAxis("Horizontal")) * Time.deltaTime * _speed;
+        Rotate(rotation);
+    }
+
+    public void Rotate(Vector3 rotation)
+    {
         if (rotation.sqrMagnitude > _influenceThreshold)
         {
             var localePosition = transform.InverseTransformPoint(ball.position);
