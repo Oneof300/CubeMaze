@@ -1728,7 +1728,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 163204137478215005, guid: 47460a842b80afc40b18935718d86a85, type: 3}
       propertyPath: m_Name
-      value: SceneFader
+      value: GameControl
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47460a842b80afc40b18935718d86a85, type: 3}
