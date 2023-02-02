@@ -30,13 +30,15 @@ public class Rotator : MonoBehaviour
         var eulerRotation = new Vector3(Input.GetAxis("Vertical"), Input.GetKey("q") ? -1f : Input.GetKey("e") ? 1f : 0f, Input.GetAxis("Horizontal")) * Time.deltaTime * _speed;
         if (eulerRotation.sqrMagnitude > 0) SetRotation(Quaternion.Slerp(transform.localRotation, transform.rotation * Quaternion.Euler(eulerRotation),  Time.deltaTime * smooth));
 
-        if (calibrated == true) {
+        if (calibrated == true)
+        {
             Quaternion rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.deltaTime * smooth);
             SetRotation(rotation);
         }
     }
 
-    public void Calibrate() {
+    public void Calibrate()
+    {
         Quaternion initialOffset = Quaternion.Inverse(incomingData.rotationTarget);
         calibration.offset = Quaternion.Euler(0, initialOffset.eulerAngles.y, 0);
         transform.parent.localRotation = calibration.offset;
