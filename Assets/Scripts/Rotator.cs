@@ -7,12 +7,17 @@ public class Rotator : MonoBehaviour
     **/
     [SerializeField]
     private UDPServer incomingData;
-    [SerializeField] float _influenceThreshold = 0.1f;
-    [SerializeField] float _speed = 100f;
+    [SerializeField]
+    private RotatorCalibration calibration;
+    [SerializeField]
+    private float _influenceThreshold = 0.1f;
+    [SerializeField]
+    private float _speed = 100f;
+    [SerializeField]
     private float smooth = 10.0f;
-    Quaternion offset; // Sample taken to calibrate.
     bool calibrated = false;
-    Rigidbody _ball; Rigidbody ball => _ball ? _ball : (_ball = GameObject.FindWithTag("Player")?.GetComponent<Rigidbody>());
+    private Rigidbody _ball;
+    private Rigidbody ball => _ball ? _ball : (_ball = GameObject.FindWithTag("Player")?.GetComponent<Rigidbody>());
 
     // Start is called before the first frame update
     void Start()
@@ -23,14 +28,14 @@ public class Rotator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(calibrated == true) {
-            Quaternion rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.deltaTime * smooth);
-            SetRotation(rotation);
-        }
-
         _speed += Input.GetKeyDown("r") ? 10f : Input.GetKeyDown("f") ? -10f : 0f;
         var eulerRotation = new Vector3(Input.GetAxis("Vertical"), Input.GetKey("q") ? -1f : Input.GetKey("e") ? 1f : 0f, Input.GetAxis("Horizontal")) * Time.deltaTime * _speed;
-        if (eulerRotation.sqrMagnitude > 0) SetRotation(Quaternion.Euler(eulerRotation));
+        if (eulerRotation.sqrMagnitude > 0) SetRotation(Quaternion.Slerp(transform.localRotation, transform.rotation * Quaternion.Euler(eulerRotation) * calibration.offset,  Time.deltaTime * smooth));
+
+        if (calibrated == true) {
+            Quaternion rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget * calibration.offset,  Time.deltaTime * smooth);
+            SetRotation(rotation);
+        }
     }
 
     public void Calibrate() {
@@ -40,8 +45,7 @@ public class Rotator : MonoBehaviour
         float nearest90degreeValue = Mathf.Round(euleroffset.y / 90f) * 90f;
         float offsetdifference = nearest90degreeValue - euleroffset.y;
         offset = Quaternion.Euler(0, offsetdifference, 0);**/
-        offset = Quaternion.Euler(0, initialOffset.eulerAngles.y, 0);
-        transform.parent.rotation = offset;
+        calibration.offset = Quaternion.Euler(0, initialOffset.eulerAngles.y, 0);
         calibrated = true;
     }
 
@@ -56,6 +60,6 @@ public class Rotator : MonoBehaviour
             ball.AddForce(Physics.gravity * Time.deltaTime);
             ball.position = newPosition;
         }
-        transform.rotation = newRotation;
+        transform.localRotation = newRotation;
     }
 }

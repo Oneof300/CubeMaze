@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 4407748249721610310}
   - component: {fileID: 4407748249721610313}
   - component: {fileID: 1834659155}
+  - component: {fileID: 1845960123682141796}
   - component: {fileID: 4830864488606837163}
   - component: {fileID: 701648063437223512}
   m_Layer: 0
@@ -111,8 +112,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bfdc5ffaa005b0409c0431d7bc3fd75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  incomingData: {fileID: 1845960123682141796}
+  calibration: {fileID: 11400000, guid: 4155c3dd6937eb548ac87068c8e342cc, type: 2}
   _influenceThreshold: 0.1
   _speed: 100
+  smooth: 10
+--- !u!114 &1845960123682141796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4407748249721610308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5bff0df5bd66d48b6916ff0fbb9fc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationTarget: {x: 0, y: 0, z: 0, w: 0}
+  portData: 2391
+  showDebug: 0
 --- !u!114 &4830864488606837163
 MonoBehaviour:
   m_ObjectHideFlags: 0
