@@ -15,13 +15,13 @@ public class Rotator : MonoBehaviour
     private float _speed = 100f;
     [SerializeField]
     private float smooth = 10.0f;
-    bool calibrated = false;
     private Rigidbody _ball;
     private Rigidbody ball => _ball ? _ball : (_ball = GameObject.FindWithTag("Player")?.GetComponent<Rigidbody>());
 
     void Start()
     {
         transform.parent.localRotation = calibration.offset;
+        transform.rotation = Quaternion.identity;
     }
 
     void Update()
@@ -30,7 +30,7 @@ public class Rotator : MonoBehaviour
         var eulerRotation = new Vector3(Input.GetAxis("Vertical"), Input.GetKey("q") ? -1f : Input.GetKey("e") ? 1f : 0f, Input.GetAxis("Horizontal")) * Time.deltaTime * _speed;
         if (eulerRotation.sqrMagnitude > 0) SetRotation(Quaternion.Slerp(transform.localRotation, transform.rotation * Quaternion.Euler(eulerRotation),  Time.deltaTime * smooth));
 
-        if (calibrated == true)
+        if (calibration.calibrated == true)
         {
             Quaternion rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.deltaTime * smooth);
             SetRotation(rotation);
@@ -42,7 +42,7 @@ public class Rotator : MonoBehaviour
         Quaternion initialOffset = Quaternion.Inverse(incomingData.rotationTarget);
         calibration.offset = Quaternion.Euler(0, initialOffset.eulerAngles.y, 0);
         transform.parent.localRotation = calibration.offset;
-        calibrated = true;
+        calibration.calibrated = true;
     }
 
     public void SetRotation(Quaternion newRotation)
