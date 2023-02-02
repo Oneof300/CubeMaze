@@ -25,12 +25,12 @@ public class Rotator : MonoBehaviour
     {
         if(calibrated == true) {
             Quaternion rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.deltaTime * smooth);
-            Rotate((rotation * Quaternion.Inverse(transform.rotation)).eulerAngles);
+            SetRotation(rotation);
         }
 
-        /*_speed += Input.GetKeyDown("r") ? 10f : Input.GetKeyDown("f") ? -10f : 0f;
+        _speed += Input.GetKeyDown("r") ? 10f : Input.GetKeyDown("f") ? -10f : 0f;
         var eulerRotation = new Vector3(Input.GetAxis("Vertical"), Input.GetKey("q") ? -1f : Input.GetKey("e") ? 1f : 0f, Input.GetAxis("Horizontal")) * Time.deltaTime * _speed;
-        Rotate(eulerRotation);*/
+        if (eulerRotation.sqrMagnitude > 0) SetRotation(Quaternion.Euler(eulerRotation));
     }
 
     public void Calibrate() {
@@ -45,17 +45,17 @@ public class Rotator : MonoBehaviour
         calibrated = true;
     }
 
-    public void Rotate(Vector3 rotation)
+    public void SetRotation(Quaternion newRotation)
     {
-        if (rotation.sqrMagnitude > _influenceThreshold && ball)
+        if (1 - Mathf.Abs(Quaternion.Dot(newRotation, transform.rotation)) > _influenceThreshold && ball)
         {
             var localePosition = transform.InverseTransformPoint(ball.position);
-            var newPosition = transform.TransformPoint(Quaternion.Euler(rotation) * localePosition);
+            var newPosition = transform.TransformPoint(newRotation * Quaternion.Inverse(transform.rotation) * localePosition);
             Debug.DrawLine(ball.position, newPosition, Color.red, 0f, false);
             ball.AddForce((newPosition - ball.position) * Time.deltaTime);
             ball.AddForce(Physics.gravity * Time.deltaTime);
             ball.position = newPosition;
         }
-        transform.Rotate(rotation);
+        transform.rotation = newRotation;
     }
 }
