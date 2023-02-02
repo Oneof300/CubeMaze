@@ -19,6 +19,11 @@ public class Rotator : MonoBehaviour
     private Rigidbody _ball;
     private Rigidbody ball => _ball ? _ball : (_ball = GameObject.FindWithTag("Player")?.GetComponent<Rigidbody>());
 
+    void Start()
+    {
+        transform.parent.localRotation = calibration.offset;
+    }
+
     void Update()
     {
         _speed += Input.GetKeyDown("r") ? 10f : Input.GetKeyDown("f") ? -10f : 0f;
@@ -34,6 +39,7 @@ public class Rotator : MonoBehaviour
     public void Calibrate() {
         Quaternion initialOffset = Quaternion.Inverse(incomingData.rotationTarget);
         calibration.offset = Quaternion.Euler(0, initialOffset.eulerAngles.y, 0);
+        transform.parent.localRotation = calibration.offset;
         calibrated = true;
     }
 
