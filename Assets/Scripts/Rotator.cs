@@ -50,7 +50,7 @@ public class Rotator : MonoBehaviour
         if (ball && Quaternion.Angle(transform.localRotation, newRotation) > _influenceThreshold)
         {
             var localePosition = transform.InverseTransformPoint(ball.position);
-            var newPosition = transform.TransformPoint(newRotation * Quaternion.Inverse(transform.rotation) * localePosition);
+            var newPosition = transform.TransformPoint(Quaternion.Inverse(transform.rotation) * newRotation * localePosition);
             Debug.DrawLine(ball.position, newPosition, Color.red, 0f, false);
             ball.AddForce((newPosition - ball.position) * Time.deltaTime);
             ball.AddForce(Physics.gravity * Time.deltaTime);
