@@ -6,19 +6,18 @@ public class Rotator : MonoBehaviour
 {
     [SerializeField] float _influenceThreshold = 0.1f;
     [SerializeField] float _speed = 100f;
-
-    Rigidbody _ball; Rigidbody ball => _ball ? _ball : (_ball = GameObject.FindWithTag("Player").GetComponent<Rigidbody>());
+    Rigidbody _ball; Rigidbody ball => _ball ? _ball : (_ball = GameObject.FindWithTag("Player")?.GetComponent<Rigidbody>());
 
     void Update()
     {
-        _speed += Input.GetKeyDown("r") ? 10f : Input.GetKeyDown("f") ? -10f : 0f;
+        /*_speed += Input.GetKeyDown("r") ? 10f : Input.GetKeyDown("f") ? -10f : 0f;
         var rotation = new Vector3(Input.GetAxis("Vertical"), Input.GetKey("q") ? -1f : Input.GetKey("e") ? 1f : 0f, Input.GetAxis("Horizontal")) * Time.deltaTime * _speed;
-        Rotate(rotation);
+        Rotate(rotation);*/
     }
 
     public void Rotate(Vector3 rotation)
     {
-        if (rotation.sqrMagnitude > _influenceThreshold)
+        if (rotation.sqrMagnitude > _influenceThreshold && ball)
         {
             var localePosition = transform.InverseTransformPoint(ball.position);
             var newPosition = transform.TransformPoint(Quaternion.Euler(rotation) * localePosition);

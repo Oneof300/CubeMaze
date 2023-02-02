@@ -70,7 +70,9 @@ public class UDPServer : MonoBehaviour
         if(showDebug)Debug.Log("Received x: " + x + " y: " + y + " z: " + z + " w: " + w);
 
         // Create a new Quaternion rotation using the received values and making right hand coordinates from left hand
-        rotationTarget = new Quaternion(y, -z, -x, w);
+        Quaternion rotationToConvert = new Quaternion(y, z, x, w);
+        Quaternion coordinateConversion = Quaternion.FromToRotation(Vector3.forward, Vector3.back);
+        rotationTarget = coordinateConversion * rotationToConvert;
 
     }
 

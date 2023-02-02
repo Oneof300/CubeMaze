@@ -31,7 +31,7 @@ public class SceneFader : MonoBehaviour
 
     IEnumerator TransitionIn()
     {
-        ball.SetActive(false);
+        ball?.SetActive(false);
         var startPosition = cube.position;
         for (float t = 0; t < 1; t += Time.deltaTime)
         {
@@ -39,12 +39,12 @@ public class SceneFader : MonoBehaviour
             yield return null;
         }
         cube.position = startPosition;
-        ball.SetActive(true);
+        ball?.SetActive(true);
     }
 
     IEnumerator TransitionToScene(int buildIndex)
     {
-        ball.SetActive(false);
+        ball?.SetActive(false);
         var startPosition = cube.position;
         for (float t = 0; t < 1; t += Time.deltaTime)
         {
