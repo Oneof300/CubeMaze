@@ -31,7 +31,7 @@ public class Rotator : MonoBehaviour
         if (eulerRotation.sqrMagnitude > 0) SetRotation(Quaternion.Slerp(transform.localRotation, transform.rotation * Quaternion.Euler(eulerRotation),  Time.deltaTime * smooth));
 
         if (calibrated == true) {
-            Quaternion rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget * calibration.offset,  Time.deltaTime * smooth);
+            Quaternion rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.deltaTime * smooth);
             SetRotation(rotation);
         }
     }
