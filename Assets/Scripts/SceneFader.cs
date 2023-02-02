@@ -39,6 +39,7 @@ public class SceneFader : MonoBehaviour
             yield return null;
         }
         cube.position = startPosition;
+        ball.transform.position = cube.rotation * ball.transform.position;
         ball?.SetActive(true);
     }
 
