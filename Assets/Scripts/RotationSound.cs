@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ObjectRotationSound : MonoBehaviour
+public class RotationSound : MonoBehaviour
 {
     public AudioClip clip;
     private Quaternion previousRotation;
