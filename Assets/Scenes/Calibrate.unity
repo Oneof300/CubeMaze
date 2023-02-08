@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 905.7539, g: 1803.8701, b: 3117.5547, a: 1}
+  m_IndirectSpecularColor: {r: 0.24683665, g: 0.24683665, b: 0.24683665, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1142,7 +1142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationTarget: {x: 0, y: 0, z: 0, w: 0}
   portData: 2391
-  showDebug: 0
+  showDebug: 1
 --- !u!114 &1689216920
 MonoBehaviour:
   m_ObjectHideFlags: 0
