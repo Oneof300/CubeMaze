@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.24683665, g: 0.24683665, b: 0.24683665, a: 1}
+  m_IndirectSpecularColor: {r: 0.24665512, g: 0.24665512, b: 0.24665512, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -467,7 +467,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6043346811331306950, guid: 469070a17cc17b0429db0f0ccc29df8f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.25
+      value: -2.5
       objectReference: {fileID: 0}
     - target: {fileID: 6043346811331306950, guid: 469070a17cc17b0429db0f0ccc29df8f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -501,13 +501,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ball
       objectReference: {fileID: 0}
+    - target: {fileID: 6043346811331306969, guid: 469070a17cc17b0429db0f0ccc29df8f, type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 469070a17cc17b0429db0f0ccc29df8f, type: 3}
---- !u!54 &406045261 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 6043346811331306970, guid: 469070a17cc17b0429db0f0ccc29df8f, type: 3}
-  m_PrefabInstance: {fileID: 406045259}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &441487269
 GameObject:
   m_ObjectHideFlags: 0
@@ -2330,9 +2329,21 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1834659155, guid: c4b1f0739b6eee24a96a5fd4961310b9, type: 3}
+      propertyPath: drag
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1834659155, guid: c4b1f0739b6eee24a96a5fd4961310b9, type: 3}
+      propertyPath: _speed
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1834659155, guid: c4b1f0739b6eee24a96a5fd4961310b9, type: 3}
+      propertyPath: bounce
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1834659155, guid: c4b1f0739b6eee24a96a5fd4961310b9, type: 3}
       propertyPath: influencedRigidBodies.Array.data[0]
       value: 
-      objectReference: {fileID: 406045261}
+      objectReference: {fileID: 0}
     - target: {fileID: 1535073903573187165, guid: c4b1f0739b6eee24a96a5fd4961310b9, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2747,6 +2758,7 @@ MonoBehaviour:
   taaMotionVectorRejection: 0
   taaAntiHistoryRinging: 0
   taaBaseBlendFactor: 0.875
+  taaJitterScale: 1
   physicalParameters:
     m_Iso: 200
     m_ShutterSpeed: 0.005
