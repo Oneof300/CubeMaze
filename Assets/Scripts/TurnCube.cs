@@ -24,7 +24,8 @@ public class TurnCube : MonoBehaviour
     {
         if(calibrated == true) {
             var rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.deltaTime * smooth);
-            rotator.Rotate((rotation * Quaternion.Inverse(transform.rotation)).eulerAngles);
+            transform.localRotation = rotation;
+            // rotator.Rotate((rotation * Quaternion.Inverse(transform.localRotation)).eulerAngles);
         }
     }
 
