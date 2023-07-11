@@ -34,7 +34,7 @@ public class Rotator : MonoBehaviour
         previousRotation = transform.rotation;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         _speed += Input.GetKeyDown("r") ? 10f : Input.GetKeyDown("f") ? -10f : 0f;
         var eulerRotation = new Vector3(Input.GetAxis("Vertical"), Input.GetKey("q") ? -1f : Input.GetKey("e") ? 1f : 0f, Input.GetAxis("Horizontal")) * Time.deltaTime * _speed;
@@ -42,16 +42,16 @@ public class Rotator : MonoBehaviour
 
         if (calibration.calibrated == true)
         {
-            Quaternion rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.fixedDeltaTime * smooth);
+            Quaternion rotation = Quaternion.Slerp(transform.localRotation, incomingData.rotationTarget,  Time.deltaTime * smooth);
             SetRotation(rotation);
         }
 
-        if (!ball.activeSelf) return;
-        ballCollisionIterations = 0;
-        HandleBallCollision();
+        // if (!ball.activeSelf) return;
+        // ballCollisionIterations = 0;
+        // HandleBallCollision();
 
-        previousBallPosition = ball.transform.position;
-        previousRotation = transform.rotation;
+        // previousBallPosition = ball.transform.position;
+        // previousRotation = transform.rotation;
     }
 
     private void HandleBallCollision()
@@ -88,15 +88,16 @@ public class Rotator : MonoBehaviour
 
     public void SetRotation(Quaternion newRotation)
     {
-        // if (ball && Quaternion.Angle(transform.localRotation, newRotation) > _influenceThreshold)
-        // {
-        //     var localePosition = transform.InverseTransformPoint(ball.position);
-        //     var newPosition = transform.TransformPoint(Quaternion.Inverse(transform.rotation) * newRotation * localePosition);
-        //     Debug.DrawLine(ball.position, newPosition, Color.red, 0f, false);
-        //     ball.AddForce((newPosition - ball.position) * Time.deltaTime);
-        //     ball.AddForce(Physics.gravity * Time.deltaTime);
-        //     ball.position = newPosition;
-        // }
+        var ballBody = ball.GetComponent<Rigidbody>();
+        if (ball.activeSelf && ballBody && Quaternion.Angle(transform.localRotation, newRotation) > _influenceThreshold)
+        {
+            var localePosition = transform.InverseTransformPoint(ballBody.position);
+            var newPosition = transform.TransformPoint(Quaternion.Inverse(transform.rotation) * newRotation * localePosition);
+            Debug.DrawLine(ballBody.position, newPosition, Color.red, 0f, false);
+            ballBody.AddForce((newPosition - ballBody.position) * Time.deltaTime);
+            ballBody.AddForce(Physics.gravity * Time.deltaTime);
+            ballBody.position = newPosition;
+        }
         transform.localRotation = newRotation;
     }
 }
